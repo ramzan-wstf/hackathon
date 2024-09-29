@@ -157,7 +157,7 @@ const ChatWindow = ({
         try {
           const res = await getTransactionInfo(message, chatId);
           if (res?.data) {
-            const response = JSON.parse(res?.data?.detail);
+            console.log(res, 'response');
             setData(res?.data);
             setIsTransaction(true);
             setMessage(res?.data?.explanation, newActiveChat);
@@ -166,6 +166,7 @@ const ChatWindow = ({
           // if data is not null then show the data in the answer
           // else shosw the message
         } catch (error) {
+          console.log(error, 'error');
           setMessage(
             "Error generating response Please try again after some time.",
             newActiveChat

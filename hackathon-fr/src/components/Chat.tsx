@@ -41,10 +41,7 @@ const Chat = ({
     scrollToBottom();
 
     if (activeChat?.length === 1) {
-      document.title = `${activeChat[0]?.question?.value?.substring(
-        0,
-        30
-      )} - LWAI`;
+      document.title = `ChatBot`;
     }
   }, [activeChat]);
 
