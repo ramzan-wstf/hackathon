@@ -51,7 +51,7 @@ export const getTransactionResponse = async (message: string, chatId: string, hi
 
 export const getWalletResponse = async (message: string, chatId: string, history: any) => {
   try {
-    const { data } = await axios.post(`${API_URL}/queryWallet`, { message, chatId, history });
+    const { data } = await axios.post(`${API_URL}/queryWallet`, { message, chatId, history: [] });
     return data;
   } catch (err: any) {
     return err.message;

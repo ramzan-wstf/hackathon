@@ -6,7 +6,7 @@ import { updateScore } from '../backendServices/userServices';
 
 
 
-const GiftCard = ({ ref, handleChangeGiftClick, setGiftData, animation, giftType, totalCoinsRef, giftData }: { setGiftData: any, ref: any, handleChangeGiftClick: () => void, animation: any, giftType: string, totalCoinsRef: any, giftData: any }) => {
+const GiftCard = ({ ref, handleSetRef, handleChangeGiftClick, setGiftData, animation, giftType, totalCoinsRef, giftData }: { setGiftData: any, ref: any, handleSetRef: (val: number) => void;  handleChangeGiftClick: () => void, animation: any, giftType: string, totalCoinsRef: any, giftData: any }) => {
   const { rise, flipx } = animation;
   const dispatch = useDispatch<any>();
   const { user } = useSelector((state: any) => state.user);
@@ -56,6 +56,7 @@ const GiftCard = ({ ref, handleChangeGiftClick, setGiftData, animation, giftType
     // if (ref?.current && coinCount) {
       console.log('insideeeeee')
       dispatch(setUser({ ...user, points: user?.points + coinCount }));
+      handleSetRef(user?.points + coinCount);
       // ref.current = user?.points + coinCount;
     // }
     // setScore(coinCount);

@@ -58,6 +58,10 @@ const GameComponent = ({
     setGetGift(!getGift);
   }
 
+  const handleSetRef = (val: number) => {
+    pointRef.current = val;
+  }
+
   let id: NodeJS.Timeout;
   useEffect(() => {
     if (isStart) {
@@ -140,7 +144,7 @@ const GameComponent = ({
                 />
               </div>
               <p className="text-5xl bg-[#21231A] z-10 rounded-xl border-2 border-[#000000] p-2 pl-3 -translate-x-3 font-semibold">
-                {user?.points}  
+                {pointRef?.current}  
               </p>
             </div>
             <p className="mt-2 text-black font-semibold text-center text-xl">
@@ -196,7 +200,7 @@ const GameComponent = ({
             </div>
           </div>
         </div>
-        {getGift && giftData && <GiftBoxAnimation setGiftData={setGiftData} ref={pointRef} totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick} giftData={giftData} />}
+        {getGift && giftData && <GiftBoxAnimation handleSetRef={handleSetRef} setGiftData={setGiftData} ref={pointRef} totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick} giftData={giftData} />}
 
         {/* Bottom Section */}
         <div className="flex justify-between mt-auto h-20 gap-4 items-start">

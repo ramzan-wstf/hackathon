@@ -17,7 +17,7 @@ const box_state = {
   boxRise: "boxRise",
 }
 
-export default function GiftBoxAnimation({ setGiftData, ref, handleChangeGiftClick, totalCoinsRef, giftData}: {ref: any,setGiftData: any, handleChangeGiftClick: () => void, totalCoinsRef: any, giftData: any}) {
+export default function GiftBoxAnimation({ setGiftData, ref, handleSetRef, handleChangeGiftClick, totalCoinsRef, giftData}: {ref: any,setGiftData: any, handleChangeGiftClick: () => void, totalCoinsRef: any, giftData: any; handleSetRef: (val: number) => void;}) {
   const [state, setState] = useReducer(
     (state: any, new_state: any) => ({
       ...state,
@@ -59,7 +59,7 @@ export default function GiftBoxAnimation({ setGiftData, ref, handleChangeGiftCli
     <div className="App">
       <Confetti open={jump === "jump"} />
       <div className={`img-container` }>
-        <GiftCard ref={ref} setGiftData={setGiftData} handleChangeGiftClick={handleChangeGiftClick} giftData={giftData?.data} animation={state} giftType={giftData?.type} totalCoinsRef={totalCoinsRef}/>
+        <GiftCard ref={ref} handleSetRef={handleSetRef} setGiftData={setGiftData} handleChangeGiftClick={handleChangeGiftClick} giftData={giftData?.data} animation={state} giftType={giftData?.type} totalCoinsRef={totalCoinsRef}/>
         <button className={`box ${move} ${drop}`} onClick={() => animate()}>
           <img src={"./box.png"} alt="box" />
         </button>
