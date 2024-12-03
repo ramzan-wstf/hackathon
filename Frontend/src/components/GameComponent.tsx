@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import GiftBoxAnimation from "./GiftBox";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const GameComponent = ({
   setMute,
@@ -95,11 +96,11 @@ const GameComponent = ({
       let res = await getGiftSwampCall(chatId);
       // console.log(res, 'res in swamp');
       if (res?.data) {
-        alert(`${res?.message} ${JSON.stringify(res)}`);
+        // alert(`${res?.message} ${JSON.stringify(res)}`);
         setGiftData(res);
       }
     } catch (err) {
-      alert(err);
+      // alert(err);
     }
   }
 
@@ -163,7 +164,7 @@ const GameComponent = ({
                 if (getGift) {
                   handleGiftClick();
                 } else {
-                  alert("No active gift available to claim");
+                  toast.error("No active gift available to claim");
                 }
               }}
               className="relative w-16 h-16 border-2 border-black z-20 flex items-center justify-center rounded-md overflow-hidden"

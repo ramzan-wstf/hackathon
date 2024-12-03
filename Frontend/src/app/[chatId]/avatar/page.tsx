@@ -70,13 +70,13 @@ const Page = ({ params }: { params: { chatId: string } }) => {
     const handleSetAvatar = async (key: string) => {
         try {
             if (user?.activeAvatarId?._id === key) {
-                alert("Avatar Already Set");
+                toast.error("Avatar Already Set");
                 return;
             }
             let res = await setActiveAvatarCall(key, params?.chatId);
             if (res?.data) {
                 dispatch(setActiveAvatarId(key));
-                alert("Avatar Set Successfully");
+                toast.success("Avatar Set Successfully");
             }
         } catch (err) {
             console.log(err);
