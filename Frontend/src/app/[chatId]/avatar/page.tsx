@@ -51,7 +51,7 @@ const Page = ({ params }: { params: { chatId: string } }) => {
     const getAvatars = async () => {
         try {
             let res = await getAllAvatars(params?.chatId);
-            console.log(res, 'response');
+            // console.log(res, 'response');
             if (res?.data?.avatars) {
                 setAvatars(res?.data?.avatars);
                 dispatch(setAvatarData(res?.data?.avatars));
@@ -79,7 +79,7 @@ const Page = ({ params }: { params: { chatId: string } }) => {
                 toast.success("Avatar Set Successfully");
             }
         } catch (err) {
-            console.log(err);
+            // console.log(err);
         }
     }
 

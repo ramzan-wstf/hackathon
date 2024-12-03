@@ -18,16 +18,16 @@ export default function Home({ params }: { params: { chatId: string } }) {
   const [score, setScore] = useState<number>(0);
   const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state?.user);
-  console.log(user, 'user');
+  // console.log(user, 'user');
 
   const getData = async () => {
     try {
       const data = await validateChatId(params?.chatId);
-      console.log(data, 'data');
+      // console.log(data, 'data');
       setLoading(false);
       if (data && data?.data) {
         dispatch(setUser(data?.data));
-        console.log(data?.data, 'data')
+        // console.log(data?.data, 'data')
         if (data?.data?.points != null && data?.data?.points >= 0) {
           setScore(data?.data?.points);
         } else {

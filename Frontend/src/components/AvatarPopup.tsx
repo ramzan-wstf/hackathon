@@ -15,7 +15,7 @@ const AvatarPopup = ({ el, ownedAvatars, unlockedAvatars, avatars, chatId, getAv
     const [loadingState, setLoadingState] = useState(false);
     const showLoading = () => {
         setOpen(true);
-        console.log(el, ownedAvatars, unlockedAvatars, avatars)
+        // console.log(el, ownedAvatars, unlockedAvatars, avatars)
 
     };
 
@@ -23,7 +23,7 @@ const AvatarPopup = ({ el, ownedAvatars, unlockedAvatars, avatars, chatId, getAv
         try {
             let res = await sellAvatarCall(key, chatId);
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
 
@@ -44,7 +44,7 @@ const AvatarPopup = ({ el, ownedAvatars, unlockedAvatars, avatars, chatId, getAv
                         toast.error(res?.message || "Error in buying the avatar")
                     }
                     setLoadingState(false);
-                    console.log(res, 'response in buy avatar');
+                    // console.log(res, 'response in buy avatar');
                 } catch (error) {
                     setLoadingState(false);
                     toast.error("Error in buying the avatar");
@@ -54,7 +54,7 @@ const AvatarPopup = ({ el, ownedAvatars, unlockedAvatars, avatars, chatId, getAv
                 toast.error("Not enough tokens to buy");
             }
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
 
@@ -93,7 +93,7 @@ const AvatarPopup = ({ el, ownedAvatars, unlockedAvatars, avatars, chatId, getAv
                 // styles={{ content: { backgroundColor: "#fff", color: "#fff" } }}
                 onCancel={() => {
                     setOpen(false);
-                    console.log(ownedAvatars?.find((elem: any) => elem?.id === `${el}`))
+                    // console.log(ownedAvatars?.find((elem: any) => elem?.id === `${el}`))
                 }}
                 className=''
             >
