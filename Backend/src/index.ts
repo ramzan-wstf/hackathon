@@ -9,6 +9,7 @@ import http from 'http';
 import Avatar from "./models/avatars";
 import router from "./routes";
 import bot from "./bot";
+import { avatars } from "./seed/rabbits";
 
  
 
@@ -21,6 +22,7 @@ app.use(cors())
 const corsOptions = {
   origin: "*",
 };
+
 app.use(cors(corsOptions));
 
 app.use(express.json());
@@ -113,6 +115,10 @@ server.listen(8000, async () => {
     // await createAvatars();
     // await initializeUser();
     startWebSocketServer(server);
+    // for(const avatar of avatars){
+    //   const newAvatar = new Avatar(avatar);
+    //   await newAvatar.save();
+    // } 
     bot.start();
   } catch (error) {
     console.error("Failed to connect to MongoDB", error);

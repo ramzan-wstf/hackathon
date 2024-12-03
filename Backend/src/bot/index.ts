@@ -1,57 +1,158 @@
-import { Bot, InlineKeyboard } from "grammy";
+import { Bot, InlineKeyboard, InputFile } from "grammy";
 import User from "../models/userSchema";
+import { createWallet, getBalanceInTokens, transferTokensToContract } from "../wallet";
+import axios from "axios";
+import fs from "fs";
 
 
-let obj:any = {
-
-}
+let userStates:any = {};
 
 
 const bot = new Bot(process.env.BOT_TOKEN || "");
 bot.command("start", async (ctx) => {
+  console.log("NEodkdsnkldsnkdsnlidsnflkdsnfklndslkfndslkfndsk")
   const chatId = ctx.chat.id;
   const username = ctx.chat.username;
-  const chat = await bot.api.getChat(chatId);
   let user = await User.findOne({ chatId: chatId });
+  
   if (!user) {
-    user = new User({ chatId, username, points: 0 });
+    let wallet = createWallet(chatId);
+
+    user = new User({ chatId, username, points: 0,walletAddress:wallet.address, privateKey:wallet.privateKey, token:0 });
     await user.save();
-    ctx.reply("Welcome! You are now registered.");
   } else {
-    ctx.reply(
-      `Welcome back, ${username || "user"}! You have ${user.points} points.`
-    );
+    const balance:any = await getBalanceInTokens(user.walletAddress);
+    user.token = balance;
+    await user.save();
   }
-  
-  const keyboard = new InlineKeyboard().url(
-    "🎮 Play Game",
-    "https://hackathon-nine-eta.vercel.app/837414318" 
-  );
-  
-  ctx.reply("Hello! I am your new bot. Would you like to play a game?", {
-    reply_markup: keyboard,
-  });
+  replyOnStartRefresh(user,ctx);
 });
 
-// Reply to any text message
-bot.on("message:text", async(ctx) => {
-  if(!obj.hasOwnProperty(ctx.chatId)) obj[ctx.chatId] = [];
-  // Only store the recent 2 messages
-  if(obj[ctx.chatId].length >= 2) obj[ctx.chatId].shift();
-  obj[ctx.chatId].push(ctx.message.text);
-  console.log(obj)
+const replyOnStartRefresh = (user:any,ctx:any)=>{
+  try {
+    const chatId = ctx.chat.id;
+    let walletAddress = user.walletAddress;
+    let balance =  user.token;
 
-  // write a regex code to match the 32 biit hex string or 64 bit hex string and console it's type and it should start with 0x
-  const regex64 = /0x[a-fA-F0-9]{64}/;
-  const regex32 = /0x[a-fA-F0-9]{32}/;
-  if(regex64.test(ctx.message.text)){
-    ctx.reply("It's a 64 bit hex string")
-  } else if(regex32.test(ctx.message.text)){
-    ctx.reply("It's a 32 bit hex string")
-  } else {
-    ctx.reply("It's a 32 bit hex string")
+    const message = `
+      *Welcome to NeoX Bot!*\n The One Stop Solution for all your Neo needs.\n\nHere You can play games, query your wallet, transactions and NeoX Information.\n\nYou can Try out the following commands:\n
+
+      Here are your wallet details:\n
+      👛 Wallet Address :\`${walletAddress}\`(Tap To Copy)\n\n
+
+      💰 Balance : ${balance} GAS\n
+
+      Use the buttons below to:
+      🎮 Play the Game
+      💼 Query your Wallet
+      🔍 Query Transactions
+      ℹ️ Query Neo Information
+    `;
+
+    const keyboard = 
+      new InlineKeyboard([
+        [
+          InlineKeyboard.url( "🎮 Tap & Earn", `https://hackathon-nine-eta.vercel.app/${chatId}` ),
+        ],
+        [
+          InlineKeyboard.url( "🎮 View My Avatars", `https://hackathon-nine-eta.vercel.app/${chatId}/avatar` ),
+        ],
+        [
+          InlineKeyboard.url( "💼 Query Wallet", `https://hackathon-nine-eta.vercel.app//${chatId}/chat/wallet` ),
+        ],
+        [
+          InlineKeyboard.url( "🔍 Query Transactions", `https://hackathon-nine-eta.vercel.app/${chatId}/chat/transaction` ),
+          
+        ],
+        [
+          InlineKeyboard.url( " ℹ️ Query Neo Information", `https://hackathon-nine-eta.vercel.app/${chatId}/chat/neo-x` ),
+
+        ],
+        [
+          {text:"Generate Avatar",callback_data:"generate_avatar"},
+        ],
+        [
+          {text:"Deposit",callback_data:"deposit"},
+          {text:"Refresh",callback_data:"refresh_balance"},
+        ]
+      ]);
+    
+    ctx.reply(message, {
+      parse_mode:"Markdown",
+      reply_markup: keyboard,
+    });
+  } catch (error) {
+    ctx.reply("An error occurred. Please try again.");
   }
+}
 
+const generateAvatar =  async(ctx:any) => {
+  try {
+    const userId = ctx.from.id;
+    userStates[userId] = "awaiting_prompt"; // Set user state
+    await ctx.answerCallbackQuery(); // Respond to the callback
+    ctx.reply("Currently We Have Trained on One Avatar *Rubicorn*. \n Please enter your prompt:",{
+      parse_mode:"Markdown"
+    });
+    
+  } catch (error) {
+    
+
+  }
+}
+
+bot.on("callback_query:data", async (ctx) => {
+  const callbackData = ctx.callbackQuery.data;
+
+  if (callbackData == "generate_avatar") {
+    await generateAvatar(ctx);
+  } else if (callbackData == "refresh_balance") {
+    await refreshBalance(ctx);
+  }
+});
+
+
+const refreshBalance = async (ctx:any) => {
+  const chatId = ctx.chat.id;
+  let user = await User.findOne({ chatId: chatId });
+  if (!user) {
+    return ctx.reply("User not found");
+  }
+  replyOnStartRefresh(user,ctx);
+}
+
+// Listen for user messages (prompts)
+bot.on("message:text", async(ctx) => {
+  try {
+    const chatId = ctx.chat.id;
+    const user = await User.findOne({chatId});
+    if(!user){
+      ctx.reply("Invalid Request");
+      return;
+    }
+    if(user?.token < 0.0001){
+      ctx.reply("Oh ho!!! You don't have Enough Funds to generate. Please Earn By playing Game Or Add some!");
+    }
+    const userId = ctx.from.id;
+    if (userStates[userId] === "awaiting_prompt") {
+        const prompt = `rubicon a small bunny robot ${ctx.message.text}`;
+  
+        const response = await axios.post("https://b765-2401-4900-8841-cb02-7403-b007-b950-1962.ngrok-free.app/generate", { prompt });
+
+        userStates[userId] = null;
+
+        const base64String = response.data?.response; 
+        const buffer = Buffer.from(base64String, 'base64'); 
+
+        const file = new InputFile(buffer, "generated-image.png"); 
+        await ctx.replyWithPhoto(file, { caption: "Here is your generated image!" });
+        await transferTokensToContract(user?.walletAddress,0.0001,user.privateKey);
+    } else {
+        ctx.reply("Please click the button to start sending a prompt.");
+    }
+  } catch (error) {
+    ctx.reply("An error occurred. Please try again.");
+  }
 });
 
 

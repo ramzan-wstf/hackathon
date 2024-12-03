@@ -15,8 +15,8 @@ const Page = ({ params }: { params: { chatId: string } }) => {
     const { user } = useSelector((state: any) => state?.user);
     const { avatarData } = useSelector((state: any) => state?.avatarData);
     const [avatars, setAvatars] = useState<any>(null);
-    const [ownedAvatars, setOwnedAvatars] = useState<any>(null);
-    const [unlockedAvatars, setUnlockedAvatars] = useState<any>(null);
+    const [ownedAvatars, setOwnedAvatars] = useState<any>([]);
+    const [unlockedAvatars, setUnlockedAvatars] = useState<any>([]);
     const balance = 10000;
     const owned: any = {
         "1": "sdlfjal",
@@ -108,7 +108,7 @@ const Page = ({ params }: { params: { chatId: string } }) => {
                                     <div className='absolute top-0 z-40 left-0 w-full h-full flex justify-center items-center'>
                                         <MdOutlineLock color='#000' size={25} /></div></>}
                                 <div className='font-medium font-mono text-center'>{avatars[key]}</div>
-                                <AvatarPopup getAvatars={getAvatars} chatId={params?.chatId} el={key} avatars={avatars} ownedAvatars={ownedAvatars} unlockedAvatars={unlockedAvatars} />
+                                {ownedAvatars && unlockedAvatars && avatars &&<AvatarPopup getAvatars={getAvatars} chatId={params?.chatId} el={key} avatars={avatars} ownedAvatars={ownedAvatars} unlockedAvatars={unlockedAvatars} />}
                                 {/* <div className='flex flex-col justify-center items-center'>
                                     {
                                         ownedAvatars?.find((elem: any) => elem?.id === `${key}`) || unlockedAvatars?.find((elem: any) => elem?.id === `${key}`) && <p onClick={() => {
