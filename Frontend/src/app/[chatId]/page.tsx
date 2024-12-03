@@ -15,10 +15,10 @@ export default function Home({ params }: { params: { chatId: string } }) {
   const [play, setPlay] = useState(false);
   const [page, setPage] = useState("landing");
   const [isMute, setIsMute] = useState(false);
-  const [score, setScore] = useState<number>(0);
   const dispatch = useDispatch();
   const { user } = useSelector((state: any) => state?.user);
-  // console.log(user, 'user');
+  // console.log
+  console.log(user, 'user');
 
   const getData = async () => {
     try {
@@ -29,7 +29,7 @@ export default function Home({ params }: { params: { chatId: string } }) {
         dispatch(setUser(data?.data));
         // console.log(data?.data, 'data')
         if (data?.data?.points != null && data?.data?.points >= 0) {
-          setScore(data?.data?.points);
+          dispatch(setUser({ ...data?.data, points: data?.data?.points }))
         } else {
           setError(true);
         }
@@ -68,8 +68,7 @@ export default function Home({ params }: { params: { chatId: string } }) {
               setMute={setIsMute}
               mute={isMute}
               setPage={setPage}
-              score={score}
-              setScore={setScore}
+              score={user?.points}
               chatId={params?.chatId}
             />
           )}

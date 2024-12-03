@@ -18,7 +18,7 @@ const GameComponent = ({
   setPlay,
   setPage,
   score,
-  setScore,
+  // setScore,
   chatId,
 }: {
   setMute: (val: boolean) => void;
@@ -27,12 +27,12 @@ const GameComponent = ({
   setPlay: (val: boolean) => void;
   setPage: (val: string) => void;
   score: number;
-  setScore: any;
+  // setScore: any;
   chatId: string;
 }) => {
   const [isStart, setIsStart] = useState(false);
   const [coins, setCoins] = useState<any>([]);
-  const pointRef = useRef(score);
+  const pointRef = useRef<any>(score);
   const dispatch = useDispatch();
   const prevRef = useRef(score);
   const [getGift, setGetGift] = useState(false);
@@ -42,11 +42,10 @@ const GameComponent = ({
 
   const totalCoinsRef = useRef<HTMLDivElement>(null);
   const handleCoinReachTop = () => {
-    setScore((prev: any) => {
-      pointRef.current = prev + 1;
-      return prev + 1;
-    });
+    pointRef.current += 1;
+    // setScore(1)
   };
+
 
   const addNewCoin = () => {
     setCoins((prevCoins: any) => [
@@ -93,6 +92,7 @@ const GameComponent = ({
 
   const handleGiftClick = async () => {
     try {
+      setGiftData(null);
       let res = await getGiftSwampCall(chatId);
       // console.log(res, 'res in swamp');
       if (res?.data) {
@@ -140,7 +140,7 @@ const GameComponent = ({
                 />
               </div>
               <p className="text-5xl bg-[#21231A] z-10 rounded-xl border-2 border-[#000000] p-2 pl-3 -translate-x-3 font-semibold">
-                {score}
+                {user?.points}  
               </p>
             </div>
             <p className="mt-2 text-black font-semibold text-center text-xl">
@@ -196,7 +196,7 @@ const GameComponent = ({
             </div>
           </div>
         </div>
-        {getGift && giftData && <GiftBoxAnimation ref={pointRef} setScore={setScore} totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick} giftData={giftData} />}
+        {getGift && giftData && <GiftBoxAnimation setGiftData={setGiftData} ref={pointRef} totalCoinsRef={totalCoinsRef} handleChangeGiftClick={handleChangeGiftClick} giftData={giftData} />}
 
         {/* Bottom Section */}
         <div className="flex justify-between mt-auto h-20 gap-4 items-start">
